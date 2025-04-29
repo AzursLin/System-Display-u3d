@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainScript : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class MainScript : MonoBehaviour
         Debug.Log(this.gameObject.name + " Start");
         // AdjustAspectRatio();
         SendInitedToWeb("inited");
+         Screen.SetResolution(1400, 1200, true);
+         
     }
 
     // Update is called once per frame
