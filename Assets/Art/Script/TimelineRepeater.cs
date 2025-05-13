@@ -5,7 +5,7 @@ using System.Collections;
 public class TimelineRepeater : MonoBehaviour
 {
     public PlayableDirector timelineDirector;
-    public float repeatInterval = 10f;
+    public float repeatInterval = 20f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
