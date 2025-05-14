@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using TMPro;
 public class CoarseflitersSystemOutline : MonoBehaviour
 {
   private Outline outline;
