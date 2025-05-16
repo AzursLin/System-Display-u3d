@@ -2,13 +2,18 @@ using UnityEngine;
 using TMPro;
 public class CoarseflitersSystemOutline : MonoBehaviour
 {
-  private Outline outline;
+    private Outline outline;
+      public ParticleSystem collisionParticles; // 拖入粒子系统
     [SerializeField] private RectTransform tooltipImage; // 要显示的Image的RectTransform
     private Canvas canvas;
     private RectTransform canvasRect;
     [SerializeField] private Vector2 offset = new Vector2(300, -200); // 右下方的偏移量
 
     private TMP_Text uiInfoTextAuto;
+    private TMP_Text uiInfoTextAuto2;
+
+    private float lastMouseEnterTime = 0f;
+    public float debounceInterval = 1f; // 防抖间隔1秒
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,6 +28,8 @@ public class CoarseflitersSystemOutline : MonoBehaviour
         tooltipImage.gameObject.SetActive(false);
         canvas = tooltipImage.GetComponentInParent<Canvas>();
         canvasRect = canvas.GetComponent<RectTransform>();
+
+         collisionParticles.Stop();
     }
 
     // Update is called once per frame
@@ -38,9 +45,11 @@ public class CoarseflitersSystemOutline : MonoBehaviour
 
     void OnMouseEnter()
     {
+        if(FreeCamera.IsLeftMouseHeld) return;
         outline.enabled = true; // 鼠标移入时启用描边
         tooltipImage.gameObject.SetActive(true);
         uiInfoTextAuto  = tooltipImage.Find("UIInfoText1").GetComponent<TMP_Text>();
+        uiInfoTextAuto2  = tooltipImage.Find("UIInfoText2").GetComponent<TMP_Text>();
        // 遍历所有直接子对象
         // foreach (Transform child in tooltipImage)
         // {
@@ -56,7 +65,20 @@ public class CoarseflitersSystemOutline : MonoBehaviour
         //     if (childText != null)
         //         Debug.Log(child.name + " 上有Text组件");
         // }
-        uiInfoTextAuto.text = gameObject.name;
+        string[] parts = gameObject.name.Split(new[] { '-' }, 2); 
+        uiInfoTextAuto.text = parts.Length > 1 ? parts[1] : parts[0];
+        uiInfoTextAuto2.text = parts[0];
+
+        //防抖动
+         if (Time.time - lastMouseEnterTime < debounceInterval)
+        {
+            return; // 如果距离上次触发不到1秒，则忽略
+        }
+        lastMouseEnterTime = Time.time;
+
+        // 播放粒子
+        collisionParticles.Play();
+
     }
 
 
@@ -64,6 +86,9 @@ public class CoarseflitersSystemOutline : MonoBehaviour
     {
         outline.enabled = false; // 鼠标移出时禁用描边
         tooltipImage.gameObject.SetActive(false);
+
+        // 停止粒子
+        collisionParticles.Stop();
     }
 
        private void UpdateTooltipPosition(Vector2 screenPosition)
